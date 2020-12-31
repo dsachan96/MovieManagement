@@ -1,6 +1,7 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import Bean.Movie;
@@ -19,7 +20,6 @@ public class Services {
 	public boolean checkRoleAsCritic(String user,ArrayList<User> userList) {
 		
 		for(int i=0;i<userList.size();i++){
-			//System.out.println(userList.get(i).getUserName()+" "+userList.get(i).getRole());
 			if(userList.get(i).getUserName().equalsIgnoreCase(user)&&userList.get(i).getRole().equalsIgnoreCase("critic"))
 				return true;
 			
@@ -51,11 +51,8 @@ public class Services {
 		}
 		if(count>=2){
 			userList.remove(ur);
-			//System.out.println(userList.size());
 			ur.modify();
-			//System.out.println(reviewList.get(reviewList.size()-1).getMovieName());
 			userList.add(ur);
-			//System.out.println(userList.get(0).getRole());
 		}
 	}
 
@@ -133,12 +130,12 @@ public class Services {
 		return list;
 	}
 
-	public ArrayList<Movie> topNmoviesByCrticGenereWise(ArrayList<Movie> movieList, ArrayList<User> userList, ArrayList<Review> reviewList, String genere, int n) {
-		PriorityQueue<Movie> pq = new PriorityQueue<>();
+	public ArrayList<Movie> topNmoviesByCrticGenereWise(ArrayList<Movie> movieList, String genere, int n) {
+		PriorityQueue<Movie> pq = new PriorityQueue<>(new comp());
 		for(int i=0;i<movieList.size();i++){
-			if(movieList.get(i).getGenere().equalsIgnoreCase(genere)&&){
+			if(movieList.get(i).getGenere().equalsIgnoreCase(genere)){
 				if(pq.size()==n){
-					if(pq.peek().getTotalRating()<movieList.get(i).getTotalRating()){
+					if(pq.peek().getCrticRating()<movieList.get(i).getCrticRating()){
 						pq.poll();
 						pq.add(movieList.get(i));
 					}
@@ -153,12 +150,102 @@ public class Services {
 			list.add(pq.poll());
 		}
 		return list;
-		return null;
 	}
 
-	public ArrayList<Movie> topNmoviesByCriticInYearWise(ArrayList<Movie> movieList, ArrayList<User> userList, int i,
-			int j) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Movie> topNmoviesByCriticInYearWise(ArrayList<Movie> movieList, int year,int n) {
+		PriorityQueue<Movie> pq = new PriorityQueue<>(new comp());
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getYear()==year){
+				if(pq.size()==n){
+					if(pq.peek().getCrticRating()<movieList.get(i).getCrticRating()){
+						pq.poll();
+						pq.add(movieList.get(i));
+					}
+				}
+				else{
+					pq.add(movieList.get(i));
+				}
+			}
+		}
+		ArrayList<Movie> list = new ArrayList<>();
+		while(pq.size()!=0){
+			list.add(pq.poll());
+		}
+		return list;
 	}
+
+	public void increaseCriticRating(ArrayList<Movie> movieList, String name, int rating) {
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getName().equalsIgnoreCase(name)){
+				Movie m = movieList.get(i);
+				movieList.remove(m);
+				m.increaseCrticRating(rating);
+				movieList.add(m);
+				return;
+			}
+		}
+	}
+
+	public void increaseTotalReviews(ArrayList<Movie> movieList, String name) {
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getName().equalsIgnoreCase(name)){
+				Movie m = movieList.get(i);
+				movieList.remove(m);
+				m.increaseTotalReviews();
+				movieList.add(m);
+				return;
+			}
+		}
+	}
+	
+	public double avgReviewScoreYearWise(ArrayList<Movie> movieList,int year){
+		int totalRating = 0;
+		int totalReviews = 0;
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getYear()==year){
+				totalRating = totalRating+movieList.get(i).getTotalRating();
+				totalReviews = totalReviews+movieList.get(i).getTotalReviews();
+			}
+		}
+		if(totalRating==0)
+			return 0;
+		return totalRating/totalReviews;
+	}
+	
+	public double avgReviewScoreGenereWise(ArrayList<Movie> movieList,String genere){
+		int totalRating = 0;
+		int totalReviews = 0;
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getGenere().equalsIgnoreCase(genere)){
+				totalRating = totalRating+movieList.get(i).getTotalRating();
+				totalReviews = totalReviews+movieList.get(i).getTotalReviews();
+			}
+		}
+		if(totalRating==0)
+			return 0;
+		return totalRating/totalReviews;
+	}
+	
+	public double avgReviewScoreMovieWise(ArrayList<Movie> movieList,String Movie){
+		int totalRating = 0;
+		int totalReviews = 0;
+		for(int i=0;i<movieList.size();i++){
+			if(movieList.get(i).getName().equalsIgnoreCase(Movie)){
+				totalRating = totalRating+movieList.get(i).getTotalRating();
+				totalReviews = totalReviews+movieList.get(i).getTotalReviews();
+				break;
+			}
+		}
+		if(totalRating==0)
+			return 0;
+		return totalRating/totalReviews;
+	}
+}
+class comp implements Comparator<Movie>{
+
+	@Override
+	public int compare(Movie o1, Movie o2) {
+		return o1.getCrticRating()-o2.getCrticRating();
+	}
+	
 }

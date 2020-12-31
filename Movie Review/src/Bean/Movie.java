@@ -7,6 +7,8 @@ public class Movie implements Comparable<Movie> {
 	String genere;
 	int year;
 	int totalRating;
+	int criticRating;
+	int totalReviews;
 	public String getName() {
 		return name;
 	}
@@ -32,6 +34,8 @@ public class Movie implements Comparable<Movie> {
 		this.genere = genere;
 		this.year = year;
 		this.totalRating = 0;
+		this.criticRating = 0;
+		this.totalReviews = 0;
 		}
 		else
 			throw new Exception("Movie Already exists");
@@ -44,6 +48,18 @@ public class Movie implements Comparable<Movie> {
 	}
 	public int getTotalRating(){
 		return this.totalRating;
+	}
+	public void increaseCrticRating(int rating){
+		this.criticRating += rating;
+	}
+	public int getCrticRating(){
+		return this.criticRating;
+	}
+	public void increaseTotalReviews(){
+		this.totalReviews += 1;
+	}
+	public int getTotalReviews(){
+		return this.totalReviews;
 	}
 	@Override
 	public int compareTo(Movie o) {
