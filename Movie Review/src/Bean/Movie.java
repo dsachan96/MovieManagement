@@ -2,10 +2,11 @@ package Bean;
 
 import Main.runner;
 
-public class Movie {
+public class Movie implements Comparable<Movie> {
 	String name;
 	String genere;
 	int year;
+	int totalRating;
 	public String getName() {
 		return name;
 	}
@@ -30,11 +31,22 @@ public class Movie {
 		this.name = name;
 		this.genere = genere;
 		this.year = year;
+		this.totalRating = 0;
 		}
 		else
 			throw new Exception("Movie Already exists");
 	}
 	public Movie(String name){
 		this.name = name;
+	}
+	public void increaseTotalRating(int rating) {
+		this.totalRating += rating;
+	}
+	public int getTotalRating(){
+		return this.totalRating;
+	}
+	@Override
+	public int compareTo(Movie o) {
+		return this.totalRating - o.totalRating;
 	}
 }

@@ -19,6 +19,7 @@ public class Review {
 			{
 				if(!r.checkMovieRated(user,name)){
 					if(r.checkRoleAsCritic(user)){
+						//System.out.println("here");
 						this.rating = rating*2;
 					}
 					else{
@@ -27,6 +28,7 @@ public class Review {
 					this.movieName = name;
 					this.userName = user;
 					r.upgradeUser(user);
+					r.increaseTotalRating(name,this.rating);
 				}
 				else
 					throw new Exception("Movie Already Rated by the user");
